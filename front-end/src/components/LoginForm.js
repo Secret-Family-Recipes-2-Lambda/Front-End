@@ -3,14 +3,14 @@ import { Button, Card, Form, FormGroup, Label, Input } from 'reactstrap';
 import { Link } from 'react-router-dom';
 
 
-const initialLogin = {
+const initialState = {
   username: '',
   password: '',
   isFetching: false,
 };
 
 const LoginForm = (props) => {
-  const [inputValues, setInputValues] = useState(initialLogin);
+  const [inputValues, setInputValues] = useState(initialState);
 
   const handleInputChange = (e) => {
     setInputValues({ ...inputValues, [e.target.name]: e.target.value });
