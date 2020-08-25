@@ -1,113 +1,139 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Card, Form, FormGroup, Label, Input } from 'reactstrap';
+import { Button, Form, Label, Input } from 'reactstrap';
 import * as yup from 'yup';
-import { Link } from 'react-router-dom'
 
+//set new user data state
+const RegisterForm = (props) => {
+  const [newUserData, setNewUserData] = useState({
+    fullName: '',
+    email: '',
+    userName: '',
+    password: '',
+  });
 
- //set user data state
-const RegistrationForm = (props) => {
-    const [newUser, setNewUser] = useState({
-        userName: "",
-        password: "",
-    });
+  //set yup validation
+  const schema = yup.object().shape({
+    fullName: yup.string().required('Please enter your full name!'),
+    email: yup.string().required('Please enter a valid email!'),
+    userName: yup.string().required('Please enter your Username!'),
+    password: yup.string().required('Please enter a password!'),
+  });
 
- //set yup validation 
- const formSchema = yup.object().shape({
-    userName: yup.string().required("Please enter your Username!"),
-    password: yup.string().required("Please enter a password!"),
-});
+  //set user state errors
+  const [errors, setErrors] = useState({
+    fullName: '',
+    email: '',
+    userName: '',
+    password: '',
+  });
 
- //set user state error
- const [errors, setErrors] = useState({
-  userName: "",
-  password: "",
-});
-
-//for validation using yup
-const formValidation = (e) => {
+  //for validation using yup
+  const formValidation = (e) => {
     yup
-      .reach(formSchema, e.target.name)
+      .reach(schema, e.target.name)
       .validate(e.target.value)
       .then((valid) => {
-        setErrors({ ...errors, [e.target.name]: ""});
+        setErrors({ ...errors, [e.target.name]: '' });
       })
       .catch((error) => {
         setErrors({
-            ...errors,
-            [e.target.name]: error.errors[0],
+          ...errors,
+          [e.target.name]: error.errors[0],
         });
-    });
-};
+      });
+  };
 
-//set handling change
-const handleDataChange = (e) => {
+  //set handle change of data
+  const handleDataChange = (e) => {
     e.persist();
     const newUserData = {
-        ...newUser,
-        [e.target.name]: e.target.value,
+      ...newUserData,
+      [e.target.name]: e.target.value,
     };
     formValidation(e);
-    setNewUser(newUserData);
-};
-//set button behavior
-const [buttonDisabled, setButtonDisabled] = useState(true);
+    setNewUserData(newUserData);
+  };
 
-useEffect(() => {
-    formSchema.isValid(newUser).then((valid) => {
-        setButtonDisabled(!valid);
+  //set button behavior
+  const [buttonDisabled, setButtonDisabled] = useState(true);
+
+  useEffect(() => {
+    schema.isValid(newUserData).then((valid) => {
+      setButtonDisabled(!valid);
     });
-}, [newUser, formSchema]);
+  }, [newUserData, schema]);
 
-const submitRegistration = (e) => {
+  // https://secret-recipes-2.herokuapp.com/api
+
+  const submitForm = (e) => {
     e.preventDefault()
-    .post('https://familysecretrecipes.herokuapp.com/api/auth/register', newUser)
-    .then(response =>  {
-      console.log('New User Registration:', response)
-      props.history.push('/api/auth/login')
-    })
-    .catch(error => console.log ('New User Error:', error.message))
-}
+      .post(
+        'https://familysecretrecipes.herokuapp.com/api/auth/register',
+        newUserData
+      )
+      .then((response) => {
+        console.log('Success! You just registered!', response);
+        props.history.push('/api/auth/register');
+      })
+      .catch((error) => console.log('New Registration  Error!', error.message));
+  };
 
-return (
-    <>
+  return (
     <div className='wrapper'>
-          <h1>Login or Register</h1>
-        <Link className='login-link' to='/api/autho/login'>LoginForm</Link>
-    </div>
-    <Card style={{ margin: "25px auto", width: "50%" }} >
-      <Form
-        style={{ margin: "25px auto" }}
-        onSubmit={submitRegistration}
-      >
-        <FormGroup>
-          <Label htmlFor="userName">Username</Label>
-          <Input className={errors.userName.length > 0 ? 'errors' : null}
-            type="string"
-            name="username"
-            id="username"
-            placeholder="Username"
-            value={newUser.username}
-            onChange={handleDataChange}
-          />
-        </FormGroup>
-        <FormGroup>
-          <Label htmlFor="password">Password</Label>
-          <Input className={errors.password.length > 0 ? 'errors' : null}
-            type="password"
-            name="password"
-            id="password"
-            placeholder="password"
-            value={newUser.password}
-            onChange={handleDataChange}
-          />
-        </FormGroup>
-        <Button disabled={buttonDisabled} type="submit" color="success">
-          Sign In or Register Now!
-        </Button>
-      </Form>
-    </Card>
-    </>
-  );
-}
+      <div className='form-container'>
+        <h1>Create Account</h1>
 
-export default RegistrationForm;
+        <Form onSubmit={submitForm} />
+        <div className='fullName'>
+          <Label htmlFor='fullName'>Full Name</Label>
+          <Input
+            className={errors.fullName.length > 0 ? 'errors' : null}
+            type='string'
+            name='fullName'
+            placeholder='type your fullname'
+            value={newUserData.fullName}
+            onChange={handleDataChange}
+          />
+        </div>
+        <div className='email'>
+          <Label htmlFor='email'>Email</Label>
+          <Input
+            className={errors.email.length > 0 ? 'errors' : null}
+            type='string'
+            name='email'
+            placeholder='valid email only'
+            value={newUserData.email}
+            onChange={handleDataChange}
+          />
+        </div>
+        <div className='userName'>
+          <Label htmlFor='userName'>User Name</Label>
+          <Input
+            className={errors.userName.length > 0 ? 'errors' : null}
+            type='string'
+            name='userName'
+            placeholder='choose username'
+            value={newUserData.userName}
+            onChange={handleDataChange}
+          />
+        </div>
+        <div className='password'>
+          <Label htmlFor='password'>Password</Label>
+          <Input
+            className={errors.password.length > 0 ? 'errors' : null}
+            type='string'
+            name='password'
+            placeholder='unique password'
+            value={newUserData.password}
+            onChange={handleDataChange}
+          />
+        </div>
+        <Button disabled={buttonDisabled} type='submit' color='success'>
+          Register Now!
+        </Button>
+      </div>
+    </div>
+  );
+};
+
+export default RegisterForm;

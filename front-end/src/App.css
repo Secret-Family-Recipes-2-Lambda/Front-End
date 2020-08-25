@@ -1,14 +1,7 @@
-/*
---black-coffee: #312125ff;
---dark-turquoise: #69dce4;
---light-coral: #fb5a20;
---dark-spring-green: #156137;
---minion-yellow: #fafab8;
-*/
-
 .wrapper {
   height: 100vh;
   width: 100%;
+  padding-top: 30px;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -17,7 +10,7 @@
 }
 
 .form-container {
-  width: 400px;
+  width: 30%;
   display: flex;
   flex-direction: column;
   padding: 20px 40px;
@@ -78,7 +71,7 @@ input.error {
   margin-left: 1%;
 }
 
-.firstName,
+.userName,
 .lastName,
 .email,
 .password {
@@ -87,9 +80,9 @@ input.error {
   margin-bottom: 15px;
 }
 
-.firstName,
+.userName,
 .lastName {
-  width: 49%;
+  width: 100%;
 }
 
 .email,
