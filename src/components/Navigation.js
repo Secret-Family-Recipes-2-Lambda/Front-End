@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link, useHistory, useLocation } from 'react-router-dom';
+import { Link, useHistory, useLocation , Redirect} from 'react-router-dom';
 import { Navbar, NavbarBrand, Nav, NavItem, NavLink } from 'reactstrap';
 
 const Navigation = () => {
@@ -24,7 +24,7 @@ const Navigation = () => {
                 <Nav className='nav-links'>
                     <NavItem>
                     <NavLink
-                    tag={Link}
+                    tag={Redirect}
                             to="https://fervent-mcclintock-9365f6.netlify.app/index.html">Home
                     </NavLink> 
                     
