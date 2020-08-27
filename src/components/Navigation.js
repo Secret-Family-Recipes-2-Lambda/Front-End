@@ -25,7 +25,7 @@ const Navigation = () => {
                     <NavItem>
                     <NavLink
                     tag={Link}
-                    to="/https://fervent-mcclintock-9365f6.netlify.app">Home
+                            to="https://fervent-mcclintock-9365f6.netlify.app/index.html">Home
                     </NavLink> 
                     
                     </NavItem>
