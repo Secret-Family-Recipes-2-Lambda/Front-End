@@ -1,50 +1,34 @@
-import React, { useState, useEffect } from 'react';
-import { Button, Card } from 'reactstrap';
+import React, { useState, useEffect } from "react";
+import { Card, Row } from "reactstrap";
+import axios from 'axios';
 
-const RecipeList = () => {
+const Recipes = () => {
   const [userRecipes, setUserRecipes] = useState([]);
 
   useEffect(() => {
-    authentication()
-      .get('/api/recipes')
-      .then((response) => {
+    axios
+      .get('/api/recipes/allRecipes')
+      .then(response => {
         setUserRecipes(response.data);
-        console.log(userRecipes);
+        console.log(response.data);
       })
-      .catch((error) => {
-        console.log('Something went wrong!', error);
+      .catch(error => {
+        console.log("API NOT WORKING!", error)
       });
-  }, []);
+}, []);
 
   return (
-    <Card>
-      <h1 style={{ marginLeft: '45%', width: '50%' }}>Recipe List</h1>
-      <div>
-        {userRecipes.map((recipes) => {
-          return (
-            <Card>
-              key={recipes.id}
-              style={{ margin: '25px auto', width: '25%' }}>
-              <p style={{ marginLeft: '25%', marginTop: '10px' }}>
-                Title: {recipes.title}
-              </p>
-              <p style={{ marginLeft: '25%' }}>Source: {recipes.source}</p>
-              <p style={{ marginLeft: '25%' }}>
-                Ingredients: {recipes.ingredients}
-              </p>
-              <p style={{ marginLeft: '25%' }}>
-                Category: {recipes.categories}
-              </p>
-              <Button style={{ margin: '20px auto', width: '50%' }}>
-                Edit Recipe!
-              </Button>
-            </Card>
-          );
-        })}
-        ;
+      <div className='wrapper'>
+        <div className='form-container'>
+          <h1>User Recipes</h1>
+        <Row>
+          {userRecipes.map(recipes => {
+            return <Card recipes={userRecipes} key={recipes.id} />
+          })}
+        </Row>
+        </div>
       </div>
-    </Card>
-  );
-};
+  )
 
-export default RecipeList;
+}
+export default Recipes;

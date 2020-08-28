@@ -4,38 +4,54 @@ import * as yup from 'yup';
 
 //set new user data state
 const RegisterForm = (props) => {
-  const [newUserData, setNewUserData] = useState({
-    fullName: '',
+  const [userData, setUserData] = useState({
+    firstName: '',
+    lastName: '',
     email: '',
     userName: '',
     password: '',
+    terms: true
   });
+
+  const [serverError, setServerError] = useState('');
 
   //set yup validation
   const schema = yup.object().shape({
-    fullName: yup.string().required('Please enter your full name!'),
-    email: yup.string().required('Please enter a valid email!'),
-    userName: yup.string().required('Please enter your Username!'),
-    password: yup.string().required('Please enter a password!'),
+    firstName: yup.string().required('Name is required!'),
+    lastName: yup.string().required('Lastname required!'),
+    email: yup.string()
+      .email("Valid email required")
+      .required('Must include an email!'),
+    userName: yup.string().required('Please enter your username!'),
+    password: yup.string()
+      .required("Please enter a password!")
+      .min(8, "Password too short - minum 8 characters.")
+      .matches(/(?=.*[0-9])/, "Password ust contain a number."),
+    terms: yup.boolean().oneOf([true], "Please agree to T&Cs")
   });
 
   //set user state errors
   const [errors, setErrors] = useState({
-    fullName: '',
+    firstName: '',
+    lastName: '',
     email: '',
     userName: '',
     password: '',
+    terms: ''
   });
 
-  //for validation using yup
+  const [post, setPost] = useState([])
+
+  //form validation using yup
   const formValidation = (e) => {
     yup
       .reach(schema, e.target.name)
-      .validate(e.target.value)
+      .validate(e.target.name === 'terms' ? e.target.checked : e.target.value)
       .then((valid) => {
         setErrors({ ...errors, [e.target.name]: '' });
       })
       .catch((error) => {
+        console.log(error)
         setErrors({
           ...errors,
           [e.target.name]: error.errors[0],
@@ -44,38 +60,49 @@ const RegisterForm = (props) => {
   };
 
   //set handle change of data
-  const handleDataChange = (e) => {
+  const inputChange = (e) => {
     e.persist();
+      console.log("input changed!", e.target.value);
     const newUserData = {
-      ...newUserData,
-      [e.target.name]: e.target.value,
+      ...userData,
+      [e.target.name]:
+        e.target.type === 'checkbox' ? e.target.checked : e.target.value
     };
+
     formValidation(e);
-    setNewUserData(newUserData);
+    setUserData(newUserData);
   };
 
   //set button behavior
   const [buttonDisabled, setButtonDisabled] = useState(true);
 
   useEffect(() => {
-    schema.isValid(newUserData).then((valid) => {
+    schema.isValid(userData).then((valid) => {
       setButtonDisabled(!valid);
     });
-  }, [newUserData, schema]);
-
-  // https://secret-recipes-2.herokuapp.com/api
+  }, [userData, schema]);
 
   const submitForm = (e) => {
     e.preventDefault()
+    console.log('form is submitted!')
       .post(
-        'https://familysecretrecipes.herokuapp.com/api/auth/register',
-        newUserData
-      )
+        '/api/auth/register', userData)
       .then((response) => {
-        console.log('Success! You just registered!', response);
-        props.history.push('/api/auth/register');
+        console.log('Success! You registered!', response.data);
+        setPost(response.data);
+        setServerError(null);
+        setUserData({
+          firstName: '',
+          lastName: '',
+          email: '',
+          userName: '',
+          password: '',
+          terms: true
+        });
       })
-      .catch((error) => console.log('New Registration  Error!', error.message));
+      .catch((error) => {
+        setServerError('Error in Registration');
+      });
   };
 
   return (
@@ -83,57 +110,75 @@ const RegisterForm = (props) => {
       <div className='form-container'>
         <h1>Create Account</h1>
 
-        <Form onSubmit={submitForm} />
-        <div className='fullName'>
-          <Label htmlFor='fullName'>Full Name</Label>
-          <Input
-            className={errors.fullName.length > 0 ? 'errors' : null}
-            type='string'
-            name='fullName'
-            placeholder='type your fullname'
-            value={newUserData.fullName}
-            onChange={handleDataChange}
-          />
-        </div>
-        <div className='email'>
-          <Label htmlFor='email'>Email</Label>
-          <Input
-            className={errors.email.length > 0 ? 'errors' : null}
-            type='string'
-            name='email'
-            placeholder='valid email only'
-            value={newUserData.email}
-            onChange={handleDataChange}
-          />
-        </div>
-        <div className='userName'>
-          <Label htmlFor='userName'>User Name</Label>
-          <Input
-            className={errors.userName.length > 0 ? 'errors' : null}
-            type='string'
-            name='userName'
-            placeholder='choose username'
-            value={newUserData.userName}
-            onChange={handleDataChange}
-          />
-        </div>
-        <div className='password'>
-          <Label htmlFor='password'>Password</Label>
-          <Input
-            className={errors.password.length > 0 ? 'errors' : null}
-            type='string'
-            name='password'
-            placeholder='unique password'
-            value={newUserData.password}
-            onChange={handleDataChange}
-          />
-        </div>
+      <Form onSubmit={submitForm} />
+        {serverError ? <p className="error">{serverError}</p> : null}
+        
+          <Label htmlFor='firstName'>
+            First Name
+            <Input
+              id='name'
+              type='string'
+              name='firstName'
+              placeholder='firstname required'
+              onChange={inputChange}
+              value={userData.firstName}
+            />
+            {errors.firstName.length > 0 ? <p className='error'>{errors.firstName}</p> : null}
+          </Label>
+        
+          <Label htmlFor='lastName'>
+            Last Name
+            <Input
+              type='string'
+              name='lastName'
+              placeholder='lastname required'
+              onChange={inputChange}
+              value={userData.lastName}
+            />
+            {errors.lastName.length > 0 ? <p className='error'>{errors.lastName}</p> : null}
+          </Label>
+        
+          <Label htmlFor='email'>
+            Email
+            <Input
+              type='string'
+              name='email'
+              placeholder='valid email only'
+              onChange={inputChange}
+              value={userData.email}
+            />
+            {errors.email.length > 0 ? <p className='error'>{errors.email}</p> : null}
+          </Label>
+        
+        <Label htmlFor='password'>
+            User Name
+            <Input
+              type='string'
+              name='password'
+              placeholder='create a password'
+              onChange={inputChange}
+              value={userData.password}
+            />
+            {errors.password.length > 0 ? <p className='error'>{errors.password}</p> : null}
+          </Label>
+        
+          <Label htmlFor='terms' className='terms' style={{ paddingLeft: '20px'}}>
+            <Input
+              type='checkbox'
+              name='terms'
+              onChange={inputChange}
+              checked={userData.terms}
+            />
+            Terms & Cs
+            {errors.terms.length > 0 ? <p className='error'>{errors.terms}</p> : null}
+          </Label>
         <Button disabled={buttonDisabled} type='submit' color='success'>
           Register Now!
         </Button>
+          <pre>{JSON.stringify(post, null, 2)}</pre>  
       </div>
     </div>
   );
-};
+}
 
 export default RegisterForm;

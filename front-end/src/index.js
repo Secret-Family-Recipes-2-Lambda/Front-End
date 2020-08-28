@@ -7,6 +7,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import * as serviceWorker from './serviceWorker';
 
 const rootElement = document.getElementById('root');
+
 ReactDOM.render(
   <Router>
     <App />

@@ -6,21 +6,26 @@ import * as yup from 'yup';
 //setting state
 
 const LoginForm = (props) => {
-  const [userName, setUserName] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   const schema = yup.object().shape({
-    userName: yup.string().required("Please enter your Username!"),
-    password: yup.string().required("Please enter a password!"),
-});
+    email: yup.string()
+      .email()
+      .required("Required!"),
+    password: yup.string()
+      .required("Please enter a password!")
+      .min(8, "Password too short - minimum 8 characters.")
+      .matches(/(?=.*[0-9])/, "Password must contain a number.")
+  });
 
 //set user state errors
   const [errors, setErrors] = useState({
-    username: "",
+    email: "",
     password: "",
   });
 
-//for validation using yup
+//form validation using yup
   const formValidation = (e) => {
       yup
         .reach(schema, e.target.name)
@@ -39,57 +44,56 @@ const LoginForm = (props) => {
   //set handle change of data
 const handleNameChange = (e) => {
     e.persist();
-    const userName = {
-        ...userName,
-        [e.target.name]: e.target.value,
-    };
+
     formValidation(e);
-    setUserName(userName);
+    setEmail(e.target.value);
 };
 
 const handlePasswordChange = (e) => {
   e.persist();
-  const userPassword = {
-      ...userPassword,
-      [e.target.name]: e.target.value,
-  };
+  
   formValidation(e);
-  setPassword(userPassword);
+  setPassword(e.target.value);
 };
 
 //set button behavior
 const [buttonDisabled, setButtonDisabled] = useState(true);
 
 useEffect(() => {
-    schema.isValid(userName).then((valid) => {
+  const newObj = {
+    email: email,
+    password: password
+  }
+    schema.isValid(newObj).then((valid) => {
+      console.log(valid)
         setButtonDisabled(!valid);
     });
-}, [userName, schema]);
+}, [email, password, schema]);
+
   const submitForm = (e) => {
     e.preventDefault()
-    .post('https://familysecretrecipes.herokuapp.com/api/auth/login', userName)
+    .post('/api/auth/login', email)
     .then(response => {
       console.log('Yeyy, Your Login!', response.data)
       props.history.push('/api/auth/login')
     })
     .catch(error => console.log('Login Error', error.message))
   }
-function RegistrationForm(props) {
-  console.log(props);
-}
+
   return (
       <div className='wrapper'>
         <div className='form-container'>
           <h1>Login</h1>
 
         <Form onSubmit={submitForm} />
-            <div className='userName'>
-              <Label htmlFor='userName'>Username</Label>
+            <div className='email'>
+              <Label htmlFor='email'>Email</Label>
               <Input
-                type='string'
-                name='userName'
-                placeholder='type your username'
+                type='text'
+                name='email'
+                placeholder='type your email'
                 onChange={handleNameChange}
+                value={email}
               />
             </div>
             <div className='password'>
@@ -99,6 +103,7 @@ function RegistrationForm(props) {
                 name='password'
                 placeholder='password please'
                 onChange={handlePasswordChange}
+                value={password}
               />
             </div>
             <br></br>
@@ -108,8 +113,7 @@ function RegistrationForm(props) {
           <div className='registerHere' >
           <br></br>
           Don't have an Account?
-          <Link to={'/RegistrationForm'} RegistrationForm >
-           Register Here
+          <Link to='/register'>Register Here
           </Link>
         </div>
       </div>

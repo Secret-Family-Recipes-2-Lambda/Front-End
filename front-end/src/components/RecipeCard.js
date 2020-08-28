@@ -1,165 +1,70 @@
-import React, { useState, useEffect } from "react";
-import { Card, Form, Button, FormGroup, Label, Input } from "reactstrap";
+import React, { useState, useEffect } from 'react';
+import { 
+  Button, 
+  Card, 
+  CardImg, 
+  CardBody, 
+  CardText,
+  CardTitle,
+  CardSubtitle 
+} from 'reactstrap';
 import axios from 'axios';
-import * as yup from "yup";
 
-const RecipeCards = () => {
+import img1 from '../assets/chicken.png';
+import img2 from '../assets/spring_roll.png';
+import img3 from '../assets/puto.png';
 
-     const [recipeData, setRecipeData] = useState({
-        recipeTitle: "",
-        source: "",
-        ingredients: "",
-        instructions: "", 
-        categories: "",     
-    });
-//schema validation 
-    const recipeSchema = yup.object().shape({
-        recipeTitle: yup.string().required("Enter Recipe Name"),
-        source: yup.string().required("Enter Source Origin"),
-        ingredients: yup.string().required("Enter Ingredients"),
-        instruction: yup.string().required("Enter Cooking Instructions"),
-        categories: yup.string().required("Enter Category"),
-    });
+const RecipeCard = props => {
+    const [userRecipes, setUserRecipes] = useState ([])
+    useEffect(() => {
+      axios
+        .get('/api/recipes')
+        .then((response) => {
+          setUserRecipes(response.data);
+          console.log(userRecipes);
+        })
+        .catch((error) => {
+          console.log("Data Error! BUMMER!", error);
+        });
+    }, [userRecipes]);
 
-//form submission
-    const submitNewRecipe = (e) => {
-        yup
-            .reach(recipeSchema)
-            .validate(recipeData)
-            .then((response) => {
-                console.log(response.data);
-            })
-            .catch((error) => {
-                console.log(error);
-            });
-        };
-//set state errors
-    const [errors, setErrors] = useState({
-        recipeTitle: "",
-        source: "",
-        ingredients: "",
-        instructions: "", 
-        categories: "",       
-    });    
 
-//Checks the form to see if everything is written
-    const recipeValidation = (e) => {
-        yup
-          .reach(recipeSchema, e.target.name)
-          .validate(e.target.value)
-          .then((valid) => {
-            setErrors({ ...errors, [e.target.name]: "" });
-          })
-          .catch((error) => {
-            setErrors({
-              ...errors,
-              [e.target.name]: error.errors[0],
-            });
-          });
-      };
-
-//handle change
-const inputChange = (e) => {
-    e.persist();
-    const newRecipeData = {
-      ...recipeData,
-      [e.target.name]: e.target.value,
-    };
-    recipeValidation(e);
-    setRecipeData(newRecipeData);
-  };
-//set button behavior 
-const [buttonDisabled, setButtonDisabled] = useState(true);
-
-useEffect(() => {
-    recipeSchema.isValid(recipeData).then((valid) => {
-        setButtonDisabled(!valid);
-      });
-    }, [recipeData]);
-
-//fetch data
-    axios
-    .get('https://familysecretrecipes.herokuapp.com/api/recipes/allRecipes')
-    .then((response => {
-      console.log(response.data)
-    }
-    )
 return (
-  
-    <Card style={{ margin: "25px auto", width: "50%" }}>
-      <Form
-        style={{ margin: "25px auto" }}
-        onSubmit={(e) => {
-          e.preventDefault();
-          submitNewRecipe();
-          console.log(userRecipe);
-        }}
-      >
-        <FormGroup>
-          <Label htmlFor="recipeTitle">Recipe Title</Label>
-            <Input
-              type="text"
-              name="recipeTitle"
-              id="recipeTitle"
-              placeholder="Title"
-              onChange={inputChange}
-              value={userRecipe.recipeTitle}
-            />
-          {errors.recipeTitle.length > 0 ? <p>{errors.recipeTitle}</p> : null}
-        </FormGroup>
-        <FormGroup>
-          <Label htmlFor="source">Source</Label>
-            <Input
-              type="text"
-              name="source"
-              id="source"
-              placeholder="Source"
-              onChange={inputChange}
-              value={userRecipe.source}
-            />
-            {errors.source.length > 0 ? <p>{errors.source}</p> : null}
-        </FormGroup>
-        <FormGroup>
-          <Label htmlFor="categories">Categories</Label>
-            <Input
-              type="text"
-              name="categories"
-              id="categories"
-              placeholder="Categories"
-              onChange={inputChange}
-              value={userRecipe.categories}
-            />
-            {errors.categories.length > 0 ? <p>{errors.categories}</p> : null}
-        </FormGroup>
-        <FormGroup>
-          <Label htmlFor="Ingredients">Ingredients</Label>
-            <Input
-              type="textarea"
-              name="ingredients"
-              id="Ingredients"
-              placeholder="Ingredients"
-              onChange={inputChange}
-              value={userRecipe.ingredients}
-            />
-            {errors.ingredients.length > 0 ? <p>{errors.ingredients}</p> : null}
-        </FormGroup>
-        <FormGroup>
-          <Label htmlFor="instructions">Instructions</Label>
-            <Input
-              type="textarea"
-              name="instructions"
-              id="instructions"
-              placeholder="Instructions"
-              onChange={inputChange}
-              value={userRecipe.instructions}
-            />
-            {errors.instructions.length > 0 ? <p>{errors.instructions}</p> : null}
-        </FormGroup>
-        <Button disabled={buttonDisabled} color="success">
-          Add Your Recipe!
-        </Button>
-      </Form>
-    </Card>
-  )};
+  <div className='wrapper'>
+      <div className='form-container' style={{ marginTop: '80%'}}>
+        <h1>Recipes</h1>
+        
+      <Card>
+        <CardImg top width='100%' src={ img1 } alt='Recipe' />
+          <CardBody>
+            <CardTitle>Title: Chicken BBQ</CardTitle>
+              <CardSubtitle>Source: </CardSubtitle>
+                <CardText>Some quick example text to build on the card title and make up the bulk of the card's content.</CardText>
+          </CardBody>
+          <br></br>
+          <Button outline color="success" size='sm' style={{ margin: '10px' }}>Get Recipe</Button>
+          
+        <CardImg top width='100%' src={ img2 } alt='Recipe' />
+          <CardBody>
+            <CardTitle>Title: Spring Rolls</CardTitle>
+              <CardSubtitle>Source: </CardSubtitle>
+                <CardText>Some quick example text to build on the card title and make up the bulk of the card's content.</CardText>
+          </CardBody>
+                <br></br>
+          <Button outline color="success" size='sm' style={{ margin: '10px' }}>Get Recipe</Button>
+          
+          <CardImg top width='100%' src={ img3 } alt='Recipe' />
+            <CardBody>
+              <CardTitle>Title: Puto</CardTitle>
+                <CardSubtitle>Source: </CardSubtitle>
+                  <CardText>Some quick example text to build on the card title and make up the bulk of the card's content.</CardText>
+            </CardBody>
+                <br></br>
+            <Button outline color="success" size='sm' style={{ margin: '10px' }}>Get Recipe</Button>
+      </Card>
+    </div>
+  </div>
+);
+}
 
-export default RecipeCards;
+export default RecipeCard;
