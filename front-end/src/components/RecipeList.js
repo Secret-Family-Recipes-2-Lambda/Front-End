@@ -7,7 +7,7 @@ const Recipes = () => {
 
   useEffect(() => {
     axios
-      .get('/api/recipes/allRecipes')
+      .get('http://familysecretrecipes.herokuapp.com/api/recipes/allRecipes')
       .then(response => {
         setUserRecipes(response.data);
         console.log(response.data);

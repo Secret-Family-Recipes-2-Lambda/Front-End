@@ -10,7 +10,7 @@ import RecipeCard from './components/RecipeCard';
 function App() {
   return (
       <div className='wrapper'>
-      <Navbar style={{ color:'danger', width: '40%', display: 'flex', justifyContent: 'space-around', position: 'relative', padding: '5px 1px' }} >
+      <Navbar style={{ color:'danger', width: '40%', display: 'flex', justifyContent: 'space-around', padding: '5px 1px' }} >
         <h1 style={{ color: 'white', textShadow: '3px 3px 5px #000000', marginBottom: '25px', marginTop: '25%'}}>
           Family Secret Recipe 2
         </h1>
@@ -39,7 +39,6 @@ function App() {
           </ButtonToggle>
         </Link>
       </Navbar>
-
           <Link to='/login'></Link>
           <Link to='/register'></Link>
           <Link to='/recipe'></Link>
@@ -50,6 +49,8 @@ function App() {
           <Route path='/recipes' component={RecipeCard} />
         </Switch>
       </div>
+      
+      
 
   );
 }

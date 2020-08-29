@@ -72,7 +72,7 @@ useEffect(() => {
 
   const submitForm = (e) => {
     e.preventDefault()
-    .post('/api/auth/login', email)
+    .post('http://familysecretrecipes.herokuapp.com/api/login', email)
     .then(response => {
       console.log('Yeyy, Your Login!', response.data)
       props.history.push('/api/auth/login')
