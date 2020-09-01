@@ -4,8 +4,7 @@ import { Navbar, ButtonToggle } from 'reactstrap';
 import './App.css';
 import LoginForm from './components/LoginForm';
 import RegistrationForm from './components/RegistrationForm';
-import RecipeCard from './components/RecipeCard';
-
+import Recipe from './components/RecipeCard';
 
 function App() {
   return (
@@ -14,11 +13,7 @@ function App() {
         <h1 style={{ color: 'white', textShadow: '3px 3px 5px #000000', marginBottom: '25px', marginTop: '25%'}}>
           Family Secret Recipe 2
         </h1>
-        <Link to={'/home'}>
-          <ButtonToggle color='success' size='sm' style={{ boxShadow: '2px 2px 4px #000000' }}>
-            Home
-          </ButtonToggle>
-        </Link>
+        
         <Link to={'/login'}>
           <ButtonToggle color='success' size='sm' style={{ boxShadow: '2px 2px 4px #000000' }}>
             Login
@@ -42,14 +37,12 @@ function App() {
           <Link to='/login'></Link>
           <Link to='/register'></Link>
           <Link to='/recipe'></Link>
-          
         <Switch>
           <Route path='/login' component={LoginForm} />
           <Route path='/register' component={RegistrationForm} />
-          <Route path='/recipes' component={RecipeCard} />
+          <Route path='/recipes' component={Recipe} />
         </Switch>
       </div>
-      
       
 
   );

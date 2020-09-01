@@ -6,7 +6,7 @@ import {
   CardBody, 
   CardText,
   CardTitle,
-  CardSubtitle 
+  CardSubtitle
 } from 'reactstrap';
 import axios from 'axios';
 
@@ -16,9 +16,12 @@ import img3 from '../assets/puto.png';
 
 const RecipeCard = props => {
     const [userRecipes, setUserRecipes] = useState ([])
+
+    const url = `https://familysecretrecipes.herokuapp.com/api/recipes/allRecipes`
+
     useEffect(() => {
       axios
-        .get('/api/recipes')
+        .get('https://familysecretrecipes.herokuapp.com/api/recipes/allRecipes')
         .then((response) => {
           setUserRecipes(response.data);
           console.log(userRecipes);
@@ -26,8 +29,7 @@ const RecipeCard = props => {
         .catch((error) => {
           console.log("Data Error! BUMMER!", error);
         });
-    }, [userRecipes]);
-
+    }, [userRecipes, url]);
 
 return (
   <div className='wrapper'>
@@ -70,11 +72,6 @@ Marinated in lemongrass, calamansi, garlic, and brushed with annatto seeds oil.<
           <Button outline color="success" size='sm' style={{ margin: '10px' }}>Get Recipe</Button>
       </Card>
         </div>
-          
-          
-        
-      
-        
         </div>
       </div>
     </div>

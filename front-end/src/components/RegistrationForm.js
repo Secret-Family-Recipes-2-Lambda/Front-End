@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Form, Label, Input } from 'reactstrap';
 import * as yup from 'yup';
+import axios from 'axios';
 
 //set new user data state
 const RegisterForm = (props) => {
@@ -26,7 +27,7 @@ const RegisterForm = (props) => {
     password: yup.string()
       .required("Please enter a password!")
       .min(8, "Password too short - minum 8 characters.")
-      .matches(/(?=.*[0-9])/, "Password ust contain a number."),
+      .matches(/(?=.*[0-9])/, "Password must contain a number."),
     terms: yup.boolean().oneOf([true], "Please agree to T&Cs")
   });
 
@@ -39,10 +40,10 @@ const RegisterForm = (props) => {
     password: '',
     terms: ''
   });
-
+//temp posting data showing request response
   const [post, setPost] = useState([])
 
-  //form validation using yup
+  //validate change using yup using 'reach' method
   const formValidation = (e) => {
     yup
       .reach(schema, e.target.name)
@@ -63,34 +64,34 @@ const RegisterForm = (props) => {
   const inputChange = (e) => {
     e.persist();
       console.log("input changed!", e.target.value);
-    const newUserData = {
+    const newUserForm = {
       ...userData,
       [e.target.name]:
         e.target.type === 'checkbox' ? e.target.checked : e.target.value
     };
 
     formValidation(e);
-    setUserData(newUserData);
+    setUserData(newUserForm);
   };
 
   //set button behavior
   const [buttonDisabled, setButtonDisabled] = useState(true);
 
   useEffect(() => {
-    schema.isValid(userData).then((valid) => {
-      setButtonDisabled(!valid);
+    schema.isValid(userData).then((isValid) => {
+      setButtonDisabled(!isValid);
     });
   }, [userData, schema]);
 
   const submitForm = (e) => {
-    e.preventDefault()
-    console.log('form is submitted!')
-      .post(
-        '/api/auth/register', userData)
-      .then((response) => {
+    e.preventDefault();
+    axios
+      .post('/auth/register', userData)
+      .then(response => {
         console.log('Success! You registered!', response.data);
-        setPost(response.data);
-        setServerError(null);
+        setPost(response.data); //gets the data from REST api... but API is not working!
+        console.log("success", post);
+        // reset form if successful
         setUserData({
           firstName: '',
           lastName: '',
